@@ -1,4 +1,3 @@
-// src/component/FortuneWidget.jsx
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { http } from "../api/axios";
