@@ -117,7 +117,7 @@ export default function TodoList({ mode = "all", dateISO, compact = false }) {
         <form onSubmit={onAdd} style={{ display: "flex", gap: 8 }}>
           <input
             value={title}
-            onChange={(e) => setTitle(e.target.value)
+            onChange={(e) => setTitle(e.target.value)}
             placeholder="오늘의 할 일은?"
             style={{ 
                     border: "none",
@@ -127,6 +127,7 @@ export default function TodoList({ mode = "all", dateISO, compact = false }) {
                     cursor: "pointer",
                     fontSize: "15px"
                     }}
+                  
           />
           <button
             type="submit"
