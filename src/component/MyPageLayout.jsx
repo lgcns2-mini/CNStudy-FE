@@ -1,25 +1,23 @@
-// src/component/MyPageLayout.jsx
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import Header from "./Header";
 import { User, Heart, FileText } from "lucide-react";
 
-/* ====== 스타일 ====== */
 const Shell = styled.div`
-  height: calc(100vh - 64px);           /* 헤더 아래 전체 높이 채우기 */
+  height: calc(100vh - 64px);           
   display: grid;
-  grid-template-columns: 220px 1fr;     /* 좌: 사이드 / 우: 컨텐츠 */
+  grid-template-columns: 220px 1fr;     
   gap: 24px;
   padding: 24px clamp(16px, 3vw, 48px);
-  align-items: center;                  /* 두 칼럼 모두 세로 가운데 */
+  align-items: center;                  
   
   @media (max-width: 920px) {
     grid-template-columns: 180px 1fr;
   }
   @media (max-width: 680px) {
     grid-template-columns: 1fr;
-    height: auto;                       /* 모바일은 일반 흐름 */
+    height: auto;                       
     align-items: stretch;
   }
 `;
@@ -30,12 +28,12 @@ const Side = styled.aside`
 
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;              /* 내부 항목(네비) 세로 가운데 */
+  justify-content: flex-start;              
   gap: 12px;
 
 
   width: 240px;
-  min-height: 480px;                    /* 너무 작지 않게 가드 */
+  min-height: 480px;                    
   border-radius: 16px;
   backdrop-filter: blur(10px);
   background: rgba(255,255,255,0.28);
@@ -89,7 +87,6 @@ const Content = styled.main`
   min-height: 60vh;  /* 적당한 높이 가드 */
 `;
 
-/* ====== 컴포넌트는 동일 ====== */
 export default function MyPageLayout({ children }) {
   const { pathname } = useLocation();
   const items = [

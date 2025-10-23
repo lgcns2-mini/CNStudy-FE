@@ -1,4 +1,3 @@
-// src/components/WeatherBackground.jsx
 import React, { useMemo } from "react";
 import styled from "styled-components";
 import clearDay     from "../styles/videos/clear-day.mp4";
@@ -9,7 +8,6 @@ import rainyDay     from "../styles/videos/rainy-day.mp4";
 import rainyNight   from "../styles/videos/rainy-night.mp4";
 import snowyDay     from "../styles/videos/snowy-day.mp4";
 import snowyNight   from "../styles/videos/snowy-night.mp4";
-
 
 const Wrap = styled.div`
   width: 100%;
@@ -29,8 +27,6 @@ const Video = styled.video`
   object-position: center top;
   filter: saturate(1.05) contrast(1.02);
 `;
-
-// condition: 'clear' | 'clouds' | 'rain' | 'snow' |
 
 function pickVideoSrc(isDay, condition = "clear") {
   const c = condition.toLowerCase();

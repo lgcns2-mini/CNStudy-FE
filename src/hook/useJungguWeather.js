@@ -1,4 +1,3 @@
-// src/hooks/useWeather.js
 import { useEffect, useState } from "react";
 
 export default function useWeather() {
@@ -24,15 +23,14 @@ export default function useWeather() {
       const condition = (w0?.main || "Clear").toLowerCase();
       const description = w0?.description || "";
 
-      // ✅ 모두 UTC이므로 그대로 비교
       const isDay = data.dt >= data.sys.sunrise && data.dt < data.sys.sunset;
 
       setWeather({
         temp: Math.round(data.main?.temp ?? 0),
         humidity: data.main?.humidity ?? 0,
         description,
-        condition,   // 'clear' | 'clouds' | 'rain' | 'snow' ...
-        isDay,       // 🔥 배경 분기에 사용
+        condition,   
+        isDay,       
       });
     } catch (e) {
       console.error("[weather] fetch error:", e);
@@ -44,7 +42,6 @@ export default function useWeather() {
 
   useEffect(() => {
     getWeather();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return { weather, loading, error };

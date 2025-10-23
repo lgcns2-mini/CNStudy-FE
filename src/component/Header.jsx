@@ -1,4 +1,3 @@
-// src/components/Header.jsx
 import React from "react";
 import styled from "styled-components";
 import { NavLink, useNavigate } from "react-router-dom";
@@ -43,9 +42,6 @@ const Icon = styled.img`
   margin-right: 5px;
   margin-bottom: -2.5px;
 `;
-
-
-
 
 export default function Header() {
   const nav = useNavigate();

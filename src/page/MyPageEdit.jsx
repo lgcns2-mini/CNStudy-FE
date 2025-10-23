@@ -1,4 +1,3 @@
-// src/page/MyPageEdit.jsx
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import MyPageLayout from "../component/MyPageLayout";
@@ -9,7 +8,6 @@ import {
 } from "../styles/common";
 import { Eye, EyeOff } from "lucide-react";
 
-// 공용 DateSelect: 초기값 적용 + 동기화
 function DateSelect({ value, onChange }) {
   const init = useMemo(() => {
     if (!value) return { y: "", m: "", d: "" };
@@ -69,16 +67,15 @@ export default function MyPageEdit() {
 
   const [name, setName] = useState(stored.name || "");
   const [email, setEmail] = useState(stored.email || "");
-  const [birth, setBirth] = useState(stored.birth || stored.birthday || ""); // "YYYY-MM-DD"
-  const [newPw, setNewPw] = useState("");     // 새 비밀번호(선택)
-  const [newPw2, setNewPw2] = useState("");   // 새 비밀번호 확인
+  const [birth, setBirth] = useState(stored.birth || stored.birthday || ""); 
+  const [newPw, setNewPw] = useState("");     
+  const [newPw2, setNewPw2] = useState("");  
   const [showPw, setShowPw] = useState(false);
   const [showPw2, setShowPw2] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
-  // 초기 프로필 로딩
   useEffect(() => {
     const fetchProfile = async () => {
       if (!userId) return;
@@ -101,8 +98,6 @@ export default function MyPageEdit() {
       alert("이름은 필수입니다.");
       return;
     }
-    // 이메일 형식/중복 검증 제거 요청 → 아무 문자열도 허용
-    // 비번 변경 시 확인 일치 체크만 수행
     if (newPw && newPw !== newPw2) {
       alert("새 비밀번호가 일치하지 않습니다.");
       return;
@@ -110,12 +105,9 @@ export default function MyPageEdit() {
 
     try {
       setLoading(true);
-
-      // 백엔드로 보낼 페이로드
-      // - 새 비번이 있으면 newPasswd 포함 (없으면 생략)
       const payload = {
         name,
-        email,                // 어떤 문자열이든 허용 (type="text" 로 입력 제한 없음)
+        email,                
         birthday: birth || "",
         ...(newPw ? { newPasswd: newPw } : {}),
       };
@@ -126,7 +118,6 @@ export default function MyPageEdit() {
         { headers: { "Content-Type": "application/json" } }
       );
 
-      // 로컬 갱신
       localStorage.setItem(
         "user",
         JSON.stringify({
@@ -155,7 +146,6 @@ export default function MyPageEdit() {
       <FormWrapper as="form" onSubmit={submit} style={{ width: 520 }}>
         <Title>회원정보 수정</Title>
 
-        {/* 이름 */}
         <div>
           <label style={{ fontSize: 15 }}>이름</label>
           <Input
@@ -174,7 +164,6 @@ export default function MyPageEdit() {
           />
         </div>
 
-        {/* 이메일 (형식 검증 제거: type="text") */}
         <div>
           <label style={{ fontSize: 15 }}>이메일</label>
           <Input
@@ -193,7 +182,6 @@ export default function MyPageEdit() {
           />
         </div>
 
-        {/* 새 비밀번호(선택) */}
         <div style={{ position: "relative", width: "100%" }}>
           <label style={{ fontSize: 15 }}>새 비밀번호 (선택)</label>
           <Input
@@ -224,7 +212,6 @@ export default function MyPageEdit() {
           </button>
         </div>
 
-        {/* 새 비밀번호 확인(선택) */}
         <div style={{ position: "relative", width: "100%" }}>
           <label style={{ fontSize: 15 }}>새 비밀번호 확인</label>
           <Input
@@ -255,7 +242,6 @@ export default function MyPageEdit() {
           </button>
         </div>
 
-        {/* 생년월일 */}
         <div>
           <label style={{ fontSize: 15 }}>생년월일</label>
           <DateSelect value={birth} onChange={setBirth} />

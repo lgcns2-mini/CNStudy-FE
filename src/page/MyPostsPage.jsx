@@ -1,23 +1,21 @@
-// src/page/MyPostsPage.jsx
 import React, { useEffect, useMemo, useState } from "react";
 import { http } from "../api/axios";
 import { Link } from "react-router-dom";
 import MyPageLayout from "../component/MyPageLayout";
 import { FormWrapper, Title, Input } from "../styles/common";
 
-const FETCH_URL = "/api/v1/mypage/boards"; // ← 컨트롤러 base path에 맞게 조정
+const FETCH_URL = "/api/v1/mypage/boards"; 
 
 export default function MyPostsPage() {
   const me = JSON.parse(localStorage.getItem("user") || "{}");
   const myId =
     me.userId ?? me.id ?? me.userSeq ?? me.seq ?? me.uid ?? null;
 
-  const [rows, setRows] = useState([]);           // 백엔드 데이터(내 글들)
+  const [rows, setRows] = useState([]);          
   const [loading, setLoading] = useState(true);
 
-  // 검색/필터/페이지네이션
   const [query, setQuery] = useState("");
-  const [scope, setScope] = useState("title");    // title | author (DTO엔 content가 없음)
+  const [scope, setScope] = useState("title");    
   const [category, setCategory] = useState("전체");
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -31,21 +29,17 @@ export default function MyPostsPage() {
       }
       try {
         setLoading(true);
-        // ✅ 내 글 목록 가져오기
-        // GET /api/v1/mypage/boards?userId=123
         const { data } = await http.get(FETCH_URL, { params: { userId: myId } });
 
-        // DTO: { boardId, title, userName, createdAt, category }
         const mapped = (Array.isArray(data) ? data : []).map((b) => ({
           id: b.boardId,
           boardId: b.boardId,
           title: b.title,
           authorName: b.userName,
-          date: b.createdAt,             // "yyyy-MM-dd"
+          date: b.createdAt,             
           category: b.category || "기타",
         }));
 
-        // 최신 글 우선(내림차순)
         mapped.sort((a, b) => Number(b.id) - Number(a.id));
         setRows(mapped);
       } catch (err) {
@@ -56,19 +50,16 @@ export default function MyPostsPage() {
     })();
   }, [myId]);
 
-  // 카테고리 옵션(내 글에서만 추출)
   const categoryOptions = useMemo(() => {
     const set = new Set((rows || []).map((r) => r.category || "기타"));
     return ["전체", ...Array.from(set)];
   }, [rows]);
 
-  // 필터링: 카테고리
   const categoryFiltered = useMemo(() => {
     if (category === "전체") return rows;
     return rows.filter((r) => (r.category || "기타") === category);
   }, [rows, category]);
 
-  // 필터링: 검색(제목/작성자)
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return categoryFiltered;
@@ -82,7 +73,6 @@ export default function MyPostsPage() {
     });
   }, [categoryFiltered, query, scope]);
 
-  // 페이지네이션
   useEffect(() => setCurrentPage(1), [query, scope, category]);
 
   const totalPages = Math.ceil(filtered.length / perPage) || 1;
@@ -105,7 +95,6 @@ export default function MyPostsPage() {
       <FormWrapper style={{ width: 1000, maxWidth: "100%" }}>
         <Title>내가 작성한 글</Title>
 
-        {/* 상단 툴바 */}
         <div
           style={{
             display: "flex",
@@ -117,7 +106,7 @@ export default function MyPostsPage() {
           }}
         >
           <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-            {/* 카테고리 */}
+
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
@@ -136,7 +125,6 @@ export default function MyPostsPage() {
               ))}
             </select>
 
-            {/* 검색 범위 (DTO에 content 없음) */}
             <select
               value={scope}
               onChange={(e) => setScope(e.target.value)}
@@ -153,7 +141,6 @@ export default function MyPostsPage() {
             </select>
           </div>
 
-          {/* 검색 입력 */}
           <div style={{ position: "relative" }}>
             <Input
               value={query}
@@ -176,7 +163,6 @@ export default function MyPostsPage() {
           </div>
         </div>
 
-        {/* 목록 테이블 (views/likes 제거: DTO에 없음) */}
         <table
           style={{
             width: "100%",
@@ -227,7 +213,6 @@ export default function MyPostsPage() {
           </tbody>
         </table>
 
-        {/* 페이지네이션 */}
         {!loading && (
           <div style={{ textAlign: "center", marginTop: 20 }}>
             <button
