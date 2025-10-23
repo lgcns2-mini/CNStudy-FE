@@ -19,8 +19,8 @@ export default function AppRoutes() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/main" element={<MainPage />} />
      
-      <Route path="/summary" element={<SummaryPage />} />   {/* 추가 */}
-      <Route path="/summary/:id" element={<SummaryDetailPage />} /> {/* 추가 */}
+      <Route path="/summary" element={<SummaryPage />} />   
+      <Route path="/summary/:id" element={<SummaryDetailPage />} /> 
       <Route path="/summary/write" element={<SummaryWritePage />} />
 
       <Route path="/schedule" element={<SchedulePage />} />
