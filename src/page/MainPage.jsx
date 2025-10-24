@@ -1,4 +1,3 @@
-// src/page/MainPage.jsx
 import React, { useState } from "react";
 import styled from "styled-components";
 import Header from "../component/Header";
@@ -10,13 +9,11 @@ import MainPageCalendar from "../component/MainPageCalendar";
 import CalendarModal from "../component/CalendarModal";
 import FortuneWidget from "../component/FortuneWidget";
 
-
-
 const Page = styled.div`
   position: fixed;
-  inset: 0;            /* top/right/bottom/left: 0 */
+  inset: 0;           
   height: 100dvh;      
-  overflow: hidden;    /* 전체 스크롤 차단 */
+  overflow: hidden;    
 `;
 
 const Layout = styled.main`
@@ -25,15 +22,15 @@ const Layout = styled.main`
   display: flex;
   gap: 24px;
   padding: 24px clamp(16px, 3vw, 48px);
-  height: calc(100vh - 100px); /* 헤더 높이 대략값, 필요 시 조정 */
+  height: calc(100vh - 100px); 
 `;
 
 const Left = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
-  align-items: stretch;   /* 좌우 꽉 채우기 */
-  gap: 16px;              /* 날씨와 리더보드 사이 간격 */
+  align-items: stretch;   
+  gap: 16px;              
   justify-content: flex-end;
 `;
 
@@ -41,8 +38,8 @@ const Right = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
-  align-items: stretch;   /* 좌우 꽉 채우기 */
-  gap: 16px;              /* 날씨와 리더보드 사이 간격 */
+  align-items: stretch;   
+  gap: 16px;              
   justify-content: flex-start;
 `;
 
@@ -65,30 +62,20 @@ export default function MainPage() {
   const [selectedDate, setSelectedDate] = useState(null);
   const [open, setOpen] = useState(false);
 
-
-
-
   function handleSelectDate(dateISO) {
     setSelectedDate(dateISO);
     setOpen(true);
   }
 
-
-
-
   return (
     <Page>
       <Header />
-
-      {/* 배경 비디오 */}
       <div style={{ position: "absolute", inset: 0, zIndex: -1 }}>
         <WeatherBackground isDay={isDay} condition={condition} />
       </div>
 
       <Layout>
-        {/* 좌측: 위/아래로 분할, 아래는 LeaderBoard */}
-        <Left>
-          
+        <Left>  
             {!loading && !error && weather && (
               <WeatherPanel
                 temp={Math.round(weather.temp)}
@@ -96,15 +83,10 @@ export default function MainPage() {
                 humidity={weather.humidity}
               />
             )}
-          
 
-          {/* 좌측 하단: 리더보드 */}
           <LeaderBoard />
         </Left>
-
-        {/* 우측: 일단 비워둠 (추후 운세/캘린더) */}
         <Right>
-
           <FortuneWidget />
           <MainPageCalendar 
           onSelectDate={handleSelectDate} 
@@ -115,8 +97,6 @@ export default function MainPage() {
             selectedDate={selectedDate}
             onClose={() => setOpen(false)}
           />
-
-          
         </Right>
       </Layout>
     </Page>

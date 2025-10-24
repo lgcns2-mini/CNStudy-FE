@@ -3,7 +3,6 @@ import styled from "styled-components";
 import { http } from "../api/axios";
 import userIcon from "../styles/images/usericon.png";
 
-/* ============ styled ============ */
 const Wrap = styled.section`
   backdrop-filter: blur(10px);
   background: rgba(255,255,255,0.28);
@@ -85,7 +84,6 @@ const Name = styled.span` font-size:20px; font-weight: 700; `;
 const Count = styled.span` font-size:20px; font-variant-numeric: tabular-nums; opacity: .8; `;
 const EmptyHint = styled.div` opacity:.7; padding: 8px 2px; `;
 
-/* ============ helpers ============ */
 function sortByScore(a, b) {
   if ((b.score ?? 0) !== (a.score ?? 0)) return (b.score ?? 0) - (a.score ?? 0);
   if ((b.postCount ?? 0) !== (a.postCount ?? 0)) return (b.postCount ?? 0) - (a.postCount ?? 0);
@@ -94,14 +92,9 @@ function sortByScore(a, b) {
 }
 const assignRanks = (arr) => arr.map((x, i) => ({ ...x, rank: i + 1 }));
 
-
-
-/* ============ component ============ */
 export default function LeaderBoard() {
   const [leaders, setLeaders] = useState([]);  
   const [loading, setLoading] = useState(true);
-
-
 
   useEffect(() => {
     (async () => {
@@ -110,8 +103,6 @@ export default function LeaderBoard() {
         // 백엔드: GET /api/v1/rank/leaderboard?size=10
         const res = await http.get("/api/v1/rank/leaderboard", { params: { size: 10 } });
         const data = Array.isArray(res.data) ? res.data : [];
-      
-
 
         const sorted = [...data].sort(sortByScore);
         setLeaders(assignRanks(sorted));
@@ -124,7 +115,6 @@ export default function LeaderBoard() {
     })();
   }, []);
 
-  // Top3 + 나머지(최대 10위까지)
   const paddedTop3 = useMemo(() => {
     const top3 = leaders.slice(0, 3);
     return Array.from({ length: 3 }, (_, i) => top3[i] ?? { rank: i + 1, userName: "없음", postCount: 0, placeholder: true });
@@ -140,9 +130,7 @@ export default function LeaderBoard() {
         <div>불러오는 중…</div>
       ) : (
         <>
-          {/* Top3 (1등 중앙, 2등 왼쪽, 3등 오른쪽) */}
           <Top3>
-            {/* 2등 */}
             <MedalCard $placeholder={paddedTop3[1].placeholder} $lower>
               <Avatar $lower $placeholder={paddedTop3[1].placeholder}>
                 <img src={userIcon} alt="user" />
@@ -154,7 +142,6 @@ export default function LeaderBoard() {
               </MedalInfo>
             </MedalCard>
 
-            {/* 1등 */}
             <MedalCard $placeholder={paddedTop3[0].placeholder}>
               <StarRow>★ ★ ★</StarRow>
               <Avatar $big $placeholder={paddedTop3[0].placeholder}>
@@ -167,7 +154,6 @@ export default function LeaderBoard() {
               </MedalInfo>
             </MedalCard>
 
-            {/* 3등 */}
             <MedalCard $placeholder={paddedTop3[2].placeholder}>
               <Avatar $lower $placeholder={paddedTop3[2].placeholder}>
                 <img src={userIcon} alt="user" />
@@ -180,7 +166,6 @@ export default function LeaderBoard() {
             </MedalCard>
           </Top3>
 
-          {/* 4등 이후 */}
           <List>
             {rest.length === 0 ? (
               <EmptyHint>추가 순위가 아직 없어요.</EmptyHint>

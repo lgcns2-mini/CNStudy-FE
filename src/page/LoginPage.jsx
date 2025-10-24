@@ -28,17 +28,11 @@ const LoginPage = () => {
       console.log("[debug] >>> email : ", email);
       console.log("[debug] >>> passwd : ", passwd);
 
-      const { data } = await http.post("/api/v1/users/signin", { email, passwd });
+      const { data } = await http.get("/users", { params: { email, passwd } });
 
-      if (data ?.accessToken) {
-        localStorage.setItem("user", JSON.stringify({
-          userId: data.userId,
-          email: data.email,
-          name: data.name,
-          birthday: data.birthday,
-        }));
-        localStorage.setItem("accessToken", data.accessToken);
-        localStorage.setItem("refreshToken", data.refreshToken);
+      if (Array.isArray(data) && data.length > 0) {
+        localStorage.setItem("user", JSON.stringify(data[0]));
+        localStorage.setItem("accessToken", `mock.${data[0].id}`);
         alert("로그인 성공!");
         navigate("/main", { replace: true });
       } else {
