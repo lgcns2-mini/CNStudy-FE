@@ -5,6 +5,7 @@ import { schedules, toISODate } from "../data/schedules";
 
 export default function MainPageCalendar ({onSelectDate, selectedDate}) {
 
+
     const [currentDate, setCurrentDate] = useState (new Date());
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
@@ -53,9 +54,12 @@ export default function MainPageCalendar ({onSelectDate, selectedDate}) {
         );
     };
 
+
+
     return (
         <div style={{ padding: "clamp(4px, 1.5vw, 8px)", marginLeft: "70px" }}>
         
+
         <div
         style={{
             display: "flex",
@@ -194,4 +198,6 @@ export default function MainPageCalendar ({onSelectDate, selectedDate}) {
         </div>
     </div>
     );
+
+
 };

@@ -52,4 +52,3 @@ export async function deleteTodo({ todoId, userId }) {
   await http.delete(`${base}/${todoId}/delete`, { params: { userId } });
   return true;
 }
-

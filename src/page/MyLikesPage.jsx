@@ -1,21 +1,23 @@
+// src/page/MyLikesPage.jsx
 import React, { useEffect, useMemo, useState } from "react";
 import { http } from "../api/axios";
 import { Link } from "react-router-dom";
 import MyPageLayout from "../component/MyPageLayout";
 import { FormWrapper, Title, Input } from "../styles/common";
 
-const FETCH_URL = "/api/v1/mypage/likes";
+const FETCH_URL = "/api/v1/mypage/likes"; // 컨트롤러 base path에 맞게 조정 가능
 
 export default function MyLikesPage() {
   const me = JSON.parse(localStorage.getItem("user") || "{}");
   const myId =
     me.userId ?? me.id ?? me.userSeq ?? me.seq ?? me.uid ?? null;
 
-  const [rows, setRows] = useState([]);    
+  const [rows, setRows] = useState([]);     // 백엔드에서 가져온 '내가 좋아요한 글' 목록
   const [loading, setLoading] = useState(true);
 
+  // 검색/필터/페이지네이션 상태
   const [query, setQuery] = useState("");
-  const [scope, setScope] = useState("all"); 
+  const [scope, setScope] = useState("all"); // title | author (DTO에 content 없음)
   const [category, setCategory] = useState("전체");
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -29,16 +31,21 @@ export default function MyLikesPage() {
       }
       try {
         setLoading(true);
+        // ✅ 내가 좋아요한 글 목록
+        // GET /api/v1/mypage/likes?userId=123
         const { data } = await http.get(FETCH_URL, { params: { userId: myId } });
+
+        // DTO: { boardId, title, userName, createdAt, category }
         const mapped = (Array.isArray(data) ? data : []).map((b) => ({
           id: b.boardId,
           boardId: b.boardId,
           title: b.title,
           authorName: b.userName,
-          date: b.createdAt,           
+          date: b.createdAt,            // "yyyy-MM-dd"
           category: b.category || "기타",
         }));
 
+        // 최신 글 우선 정렬
         mapped.sort((a, b) => Number(b.id) - Number(a.id));
         setRows(mapped);
       } catch (err) {
@@ -49,16 +56,19 @@ export default function MyLikesPage() {
     })();
   }, [myId]);
 
+  // 카테고리 옵션(좋아요한 글 목록에서 추출)
   const categoryOptions = useMemo(() => {
     const set = new Set((rows || []).map((r) => r.category || "기타"));
     return ["전체", ...Array.from(set)];
   }, [rows]);
 
+  // 카테고리 필터
   const categoryFiltered = useMemo(() => {
     if (category === "전체") return rows;
     return rows.filter((r) => (r.category || "기타") === category);
   }, [rows, category]);
 
+  // 검색 필터(제목/작성자)
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return categoryFiltered;
@@ -72,6 +82,7 @@ export default function MyLikesPage() {
     });
   }, [categoryFiltered, query, scope]);
 
+  // 페이지네이션
   useEffect(() => setCurrentPage(1), [query, scope, category]);
   const totalPages = Math.ceil(filtered.length / perPage) || 1;
   const start = (currentPage - 1) * perPage;
@@ -93,6 +104,7 @@ export default function MyLikesPage() {
       <FormWrapper style={{ width: 1000, maxWidth: "100%" }}>
         <Title>내가 좋아요 한 글</Title>
 
+        {/* 상단 툴바: 카테고리 + 검색범위 + 검색창 */}
         <div
           style={{
             display: "flex",
@@ -104,7 +116,7 @@ export default function MyLikesPage() {
           }}
         >
           <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-
+            {/* 카테고리 */}
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
@@ -123,6 +135,7 @@ export default function MyLikesPage() {
               ))}
             </select>
 
+            {/* 검색 범위 (DTO엔 content 없음) */}
             <select
               value={scope}
               onChange={(e) => setScope(e.target.value)}
@@ -139,6 +152,7 @@ export default function MyLikesPage() {
             </select>
           </div>
 
+          {/* 검색 입력 */}
           <div style={{ position: "relative" }}>
             <Input
               value={query}
@@ -161,6 +175,7 @@ export default function MyLikesPage() {
           </div>
         </div>
 
+        {/* 목록 테이블 (views/likes 제거) */}
         <table
           style={{ width: "100%", borderCollapse: "collapse", marginBottom: 20 }}
         >
@@ -208,6 +223,7 @@ export default function MyLikesPage() {
           </tbody>
         </table>
 
+        {/* 페이지네이션 */}
         {!loading && (
           <div style={{ textAlign: "center", marginTop: 20 }}>
             <button

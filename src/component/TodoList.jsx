@@ -127,7 +127,6 @@ export default function TodoList({ mode = "all", dateISO, compact = false }) {
                     cursor: "pointer",
                     fontSize: "15px"
                     }}
-                  
           />
           <button
             type="submit"

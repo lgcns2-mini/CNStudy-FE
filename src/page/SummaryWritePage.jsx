@@ -1,3 +1,4 @@
+// src/page/SummaryWritePage.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { http } from "../api/axios";
@@ -9,15 +10,19 @@ const SummaryWritePage = () => {
   const [url, setUrl] = useState("");
   const [content, setContent] = useState("");
   const [category, setCategory] = useState("기타");
+
   const [hashtags, setHashtags] = useState([]); 
   const [tagInput, setTagInput] = useState("");
+
   const [aiKeyword, setAiKeyword] = useState("");
-  const [aiResponse, setAiResponse] = useState(null); 
+  const [aiResponse, setAiResponse] = useState(null); // ← 객체로
   const [aiData, setAiData] = useState(null);
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState("");
+
   const navigate = useNavigate();
 
+  // 로컬 user에서 userId 유추
   const getUserId = () => {
     try {
       const user = JSON.parse(localStorage.getItem("user"));
@@ -31,6 +36,7 @@ const SummaryWritePage = () => {
     }
   };
 
+  // ✅ 글 작성 저장 (백엔드 연동)
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!title.trim() || !content.trim()) {
@@ -41,19 +47,22 @@ const SummaryWritePage = () => {
     try {
       const userId = getUserId();
 
+      // 해시태그 정제: '#tag' → 'tag', 공백 제거
       const cleanTags = (hashtags || [])
         .map((t) => String(t).trim().replace(/^#/, ""))
         .filter((t) => t.length > 0);
 
+      // 빈 문자열은 아예 보내지 않도록 undefined 처리
       const safeUrl = url.trim() ? url.trim() : undefined;
 
+      // DTO에 정확히 맞춘 본문
       const body = {
-        ...(userId !== undefined ? { userId } : {}), 
+        ...(userId !== undefined ? { userId } : {}), // userId가 있으면 포함
         title: title.trim(),
         content: content.trim(),
         category: category.trim() || "기타",
         ...(safeUrl ? { url: safeUrl } : {}),
-        hashtags: cleanTags, 
+        hashtags: cleanTags, // List<String>
       };
 
       await http.post("/api/v1/boards/register", body, {
@@ -72,6 +81,7 @@ const SummaryWritePage = () => {
     }
   };
 
+  // ✅ 임시 저장
   const handleTempSave = () => {
     const tempData = { title, url, content, category, hashtags };
     localStorage.setItem("tempSummary", JSON.stringify(tempData));
@@ -93,6 +103,10 @@ const SummaryWritePage = () => {
     setHashtags((prev) => prev.filter((t) => t !== tag));
   };
 
+
+
+// AI 도움: 백엔드 요약 API 호출
+// SummaryWritePage.jsx 안의 핸들러만 교체
 const handleAskAI = async () => {
   const plain = content?.trim();
   if (!plain) {
@@ -100,6 +114,7 @@ const handleAskAI = async () => {
     return;
   }
 
+  // JSON 스트링으로 올 때 대비: ```json ... ``` 제거 + parse
   const stripCodeFence = (s) =>
     typeof s === "string"
       ? s.replace(/^```(?:json)?\s*/i, "").replace(/```$/i, "")
@@ -116,15 +131,19 @@ const handleAskAI = async () => {
       },
     });
 
+    // data 가 객체면 그대로, 문자열이면 JSON 파싱 시도
     const obj = typeof data === "string" ? tryParseJson(data) : data;
 
     if (obj && typeof obj === "object") {
+      // snake_case / camelCase 모두 대응
       const title    = obj.title || "";
       const overview = obj.overview || "";
       const bullets  = obj.bullet_summary || obj.bulletSummary || [];
       const terms    = obj.key_terms || obj.keyTerms || [];
       const questions= obj.suggested_questions || obj.suggestedQuestions || [];
       const actions  = obj.action_items || obj.actionItems || [];
+
+      // 깔끔한 문자열로 조립 (pre 태그에 그대로 뿌리기)
       const sections = [];
 
       if (title) sections.push(`📌 ${title}`);
@@ -168,6 +187,7 @@ const handleAskAI = async () => {
       const pretty = sections.filter(Boolean).join("\n\n").trim();
       setAiResponse(pretty || "결과가 비어 있습니다.");
     } else {
+      // 객체가 아니면 있는 그대로(또는 보기 좋게)
       setAiResponse(
         typeof data === "string" ? stripCodeFence(data) : JSON.stringify(data, null, 2)
       );
@@ -177,6 +197,10 @@ const handleAskAI = async () => {
     alert("AI 요약 요청에 실패했습니다.");
   }
 };
+
+
+
+
 
   return (
     <>
@@ -190,13 +214,14 @@ const handleAskAI = async () => {
           boxSizing: "border-box",
         }}
       >
-
+        {/* 제목 */}
         <div style={{ textAlign: "center", marginBottom: "30px" }}>
           <h2 style={{ fontSize: "24px", fontWeight: "bold" }}>
             Lecture Note Writing
           </h2>
         </div>
 
+        {/* 제목 / URL / 카테고리 */}
         <div
           style={{
             display: "flex",
@@ -241,7 +266,9 @@ const handleAskAI = async () => {
           </select>
         </div>
 
+        {/* 좌/우 flex → 강의내용 + AI 도움 */}
         <div style={{ display: "flex", gap: "20px", alignItems: "stretch" }}>
+          {/* 강의 내용 */}
           <div
             style={{
               flex: 1,
@@ -276,6 +303,7 @@ const handleAskAI = async () => {
             />
           </div>
 
+          {/* AI 도움 */}
           <div style={{ flex: 1 }}>
             <h4 style={{ marginBottom: "5px" }}>🤖 학습 도움 AI</h4>
   
@@ -300,6 +328,7 @@ const handleAskAI = async () => {
           </div>
         </div>
 
+        {/* 해시태그 */}
         <div style={{ marginTop: "10px" }}>
           <label
             style={{ display: "block", fontWeight: "bold", marginBottom: "5px" }}
@@ -358,6 +387,7 @@ const handleAskAI = async () => {
           </div>
         </div>
 
+        {/* 하단 버튼 */}
         <div
           style={{
             marginTop: "30px",

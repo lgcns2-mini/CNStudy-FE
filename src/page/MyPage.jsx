@@ -1,3 +1,4 @@
+// src/page/MyPage.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import MyPageLayout from "../component/MyPageLayout";
@@ -12,6 +13,7 @@ const Label = ({ children }) => (
 );
 
 export default function MyPage() {
+  // 로그인 유저 정보(초기값은 로컬에서 불러옴)
   const stored = (() => {
     try { return JSON.parse(localStorage.getItem("user") || "{}"); }
     catch { return {}; }
@@ -21,22 +23,25 @@ export default function MyPage() {
     id: stored.userId ?? stored.id ?? stored.userSeq ?? stored.seq ?? stored.uid ?? "",
     name: stored.name ?? "",
     email: stored.email ?? "",
+    // birth(기존 키) 또는 birthday(신규 키) 둘 다 대응
     birth: stored.birth ?? stored.birthday ?? "",
     passwd: stored.passwd ?? "",
   };
 
-  const [birthStr, setBirthStr] = useState(user.birth || ""); 
+  const [birthStr, setBirthStr] = useState(user.birth || ""); // 화면에 표시할 생년월일
   const navigate = useNavigate();
 
+  // ✅ 마운트 시 백엔드에서 생년월일 가져오기
   useEffect(() => {
     const fetchBirthday = async () => {
-      if (!user.id) return; 
+      if (!user.id) return; // id 없으면 패스
       try {
         // 백엔드: /api/v1/users/{userId} 가 UserResponseDTO(email,name,birthday) 반환
         const { data } = await http.get(`/api/v1/users/${user.id}`);
-        const birthday = data?.birthday || ""; 
+        const birthday = data?.birthday || ""; // "YYYY-MM-DD"
         if (birthday) {
           setBirthStr(birthday);
+          // 로컬에도 최신 반영 (기존 코드 호환 위해 birth, birthday 둘 다 저장)
           localStorage.setItem(
             "user",
             JSON.stringify({ ...stored, birth: birthday, birthday })
@@ -47,8 +52,10 @@ export default function MyPage() {
       }
     };
     fetchBirthday();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // YYYY-MM-DD 파싱
   const [, y = "", m = "", d = ""] =
     (birthStr || "").match(/^(\d{4})-(\d{2})-(\d{2})$/) || [];
 

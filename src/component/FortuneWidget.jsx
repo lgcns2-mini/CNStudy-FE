@@ -50,11 +50,11 @@ const KeyBox = styled.div`
 
 export default function FortuneWidget() {
   const [loading, setLoading] = useState(false);
-  const [fortune, setFortune] = useState(null); 
+  const [fortune, setFortune] = useState(null); // { title, date, summary, keyPoint }
   const [error, setError] = useState(null);
 
   const user = JSON.parse(localStorage.getItem("user") || "{}");
-  const birthday = user.birthday || user.birth || "";
+  const birthday = user.birthday || user.birth || ""; // "YYYY-MM-DD"
 
   const fetchFortune = async () => {
     if (!birthday) {
@@ -80,6 +80,7 @@ export default function FortuneWidget() {
     // birthday가 바뀌면 자동 갱신
   }, [birthday]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // UI
   if (loading) {
     return (
       <Card>
