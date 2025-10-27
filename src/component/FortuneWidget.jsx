@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { http } from "../api/axios";
+import { http, httpFortune } from "../api/axios";
 import { CalendarDays, Sparkles, RefreshCcw, AlertCircle } from "lucide-react";
 
 const Card = styled.section`
@@ -65,7 +65,7 @@ export default function FortuneWidget() {
     try {
       setLoading(true);
       setError(null);
-      const { data } = await http.get(`/api/v1/fortune/${encodeURIComponent(birthday)}`);
+      const { data } = await httpFortune.get(`/api/v1/fortune/${encodeURIComponent(birthday)}`);
       setFortune(data);
     } catch (e) {
       console.error("fortune error", e?.response?.data || e);

@@ -1,7 +1,7 @@
 // src/page/SummaryWritePage.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { http } from "../api/axios";
+import { http, httpSummarize } from "../api/axios";
 import Header from "../component/Header";
 import { Input, Button } from "../styles/common";
 
@@ -124,7 +124,7 @@ const handleAskAI = async () => {
   };
 
   try {
-    const { data } = await http.post("/api/v1/summary", plain, {
+    const { data } = await httpSummarize.post("/api/v1/summary", plain, {
       headers: {
         "Content-Type": "text/plain; charset=utf-8",
         "Accept": "application/json",
