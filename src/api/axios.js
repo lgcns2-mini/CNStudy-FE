@@ -1,17 +1,17 @@
 import axios from "axios"; 
 
 export const http = axios.create({
-  baseURL: "http://172.31.4.104:8080",
+  baseURL: "http://172.31.35.230:9000",
   headers: { "Content-Type": "application/json" },
 });
 
 export const httpSummarize = axios.create({
-  baseURL: "http://172.31.4.104:9001",
+  baseURL: "http://172.31.35.230:9000",
   headers: { "Content-Type": "application/json" },
 });
 
 export const httpFortune = axios.create({
-  baseURL: "http://172.31.4.104:9002",
+  baseURL: "http://172.31.35.230:9000",
   headers: { "Content-Type": "application/json" },
 });
 
